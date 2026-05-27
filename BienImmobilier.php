@@ -2,12 +2,6 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/BienStatut.php';
-require_once __DIR__ . '/ExportableInterface.php';
-require_once __DIR__ . '/IdentifiableInterface.php';
-require_once __DIR__ . '/Proprietaire.php';
-require_once __DIR__ . '/TextSearchableInterface.php';
-
 abstract class BienImmobilier implements ExportableInterface, IdentifiableInterface, TextSearchableInterface, JsonSerializable
 {
     private string $city;

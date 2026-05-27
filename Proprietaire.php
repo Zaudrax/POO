@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/ContactableInterface.php';
-
 final class Proprietaire implements ContactableInterface, JsonSerializable
 {
     /** @var array<int, BienImmobilier> */

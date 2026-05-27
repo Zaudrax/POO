@@ -2,14 +2,7 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/Appartement.php';
-require_once __DIR__ . '/BienStatut.php';
-require_once __DIR__ . '/ContactableInterface.php';
-require_once __DIR__ . '/CsvExporter.php';
-require_once __DIR__ . '/JsonExporter.php';
-require_once __DIR__ . '/Maison.php';
-require_once __DIR__ . '/Proprietaire.php';
-require_once __DIR__ . '/SearchTerm.php';
+require_once __DIR__ . '/autoload.php';
 
 /** @param array<int, BienImmobilier> $biens */
 function rechercherBiens(array $biens, (Stringable&JsonSerializable)|string|int|null $recherche): array

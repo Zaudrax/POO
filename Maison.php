@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/BienImmobilier.php';
-
 class Maison extends BienImmobilier
 {
     private int $bedrooms;
