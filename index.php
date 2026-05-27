@@ -36,9 +36,6 @@ function afficherElementRecherche(IdentifiableInterface&TextSearchableInterface 
     echo 'Intersection type -> Bien #' . $bien->getId() . ' correspond a "' . $term . '" ? ' . $match . PHP_EOL;
 }
 
-// PRINCIPE D — Dependency Inversion : on type-hinte sur ContactableInterface
-// (qui étend maintenant EmailContactableInterface via ISP).
-// Si demain on veut uniquement l'email, on pourrait type-hinter EmailContactableInterface.
 function decrireContact((ContactableInterface&JsonSerializable)|string $contact): string
 {
     if (is_string($contact)) {
@@ -49,8 +46,6 @@ function decrireContact((ContactableInterface&JsonSerializable)|string $contact)
     return 'Contact objet (DNF): ' . (string) $json;
 }
 
-// PRINCIPE D — Dependency Inversion : on type-hinte sur ExporterInterface,
-// pas sur JsonExporter. On peut passer n'importe quel exporter ici.
 function exporterCollectionJson(Countable&IteratorAggregate $collection, ExporterInterface $exporter): string
 {
     $rows = [];
@@ -73,9 +68,6 @@ function hasBienWithId(array $biens, int $id): bool
     return false;
 }
 
-// PRINCIPE S — On injecte le PropertyHydrator avec ses handlers (OCP).
-// PRINCIPE O — Les handlers sont déclarés ici : ajouter un type Villa = ajouter new VillaHandler()
-// PRINCIPE D — On type-hinte $repository sur DataRepositoryInterface (pas JsonDataRepository)
 $hydrator = new PropertyHydrator([
     new AppartementHandler(),
     new MaisonHandler(),

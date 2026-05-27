@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-// PRINCIPE D — Dependency Inversion : CsvExporter implémente l'interface ExporterInterface
-// On peut désormais l'injecter partout où ExporterInterface est attendu.
 class CsvExporter implements ExporterInterface
 {
     public function export(array $items): string

@@ -2,13 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * PRINCIPE O — Open/Closed Principle
- *
- * Handler responsable uniquement du type "Maison".
- * Même logique qu'AppartementHandler : si on ajoute un champ "hasGarage"
- * à Maison, seul ce fichier doit être modifié.
- */
 final class MaisonHandler implements BienTypeHandlerInterface
 {
     public function supports(string $type): bool

@@ -2,26 +2,11 @@
 
 declare(strict_types=1);
 
-/**
- * PRINCIPE S — Single Responsibility Principle
- *
- * Avant : cette classe faisait 3 choses (I/O fichier + hydratation + sérialisation).
- * Après : elle ne fait plus qu'UNE chose = lire et écrire un fichier JSON.
- * Tout le mapping objet ↔ tableau est délégué à PropertyHydrator.
- *
- * PRINCIPE D — Dependency Inversion Principle
- *
- * Avant : le code appelant instanciait directement new JsonDataRepository(...)
- *         et dépendait de cette classe concrète.
- * Après : cette classe implémente DataRepositoryInterface.
- *         Le code appelant peut type-hinter sur l'interface, ce qui permet de
- *         substituer par un SqlDataRepository ou InMemoryRepository sans rien changer.
- */
 final class JsonDataRepository implements DataRepositoryInterface
 {
     /**
-     * @param string           $filePath  Chemin vers le fichier JSON
-     * @param PropertyHydrator $hydrator  Responsable du mapping objet ↔ tableau (SRP)
+     * @param string           $filePath
+     * @param PropertyHydrator $hydrator
      */
     public function __construct(
         private string $filePath,
@@ -50,10 +35,9 @@ final class JsonDataRepository implements DataRepositoryInterface
 
         $data = json_decode($rawContent, true, 512, JSON_THROW_ON_ERROR);
 
-        $ownersData     = is_array($data['owners'] ?? null)     ? $data['owners']     : [];
+        $ownersData     = is_array($data['owners'] ?? null) ? $data['owners'] : [];
         $propertiesData = is_array($data['properties'] ?? null) ? $data['properties'] : [];
 
-        // --- Hydratation déléguée au PropertyHydrator (SRP) ---
 
         $ownersById = [];
 
@@ -96,7 +80,6 @@ final class JsonDataRepository implements DataRepositoryInterface
      */
     public function save(array $owners, array $biens, array $loyers = []): void
     {
-        // --- Sérialisation déléguée au PropertyHydrator (SRP) ---
 
         $ownersData = [];
         foreach ($owners as $owner) {
