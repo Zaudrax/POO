@@ -36,6 +36,9 @@ function afficherElementRecherche(IdentifiableInterface&TextSearchableInterface 
     echo 'Intersection type -> Bien #' . $bien->getId() . ' correspond a "' . $term . '" ? ' . $match . PHP_EOL;
 }
 
+// PRINCIPE D — Dependency Inversion : on type-hinte sur ContactableInterface
+// (qui étend maintenant EmailContactableInterface via ISP).
+// Si demain on veut uniquement l'email, on pourrait type-hinter EmailContactableInterface.
 function decrireContact((ContactableInterface&JsonSerializable)|string $contact): string
 {
     if (is_string($contact)) {
@@ -46,14 +49,16 @@ function decrireContact((ContactableInterface&JsonSerializable)|string $contact)
     return 'Contact objet (DNF): ' . (string) $json;
 }
 
-function exporterCollectionJson(Countable&IteratorAggregate $collection, JsonExporter $jsonExporter): string
+// PRINCIPE D — Dependency Inversion : on type-hinte sur ExporterInterface,
+// pas sur JsonExporter. On peut passer n'importe quel exporter ici.
+function exporterCollectionJson(Countable&IteratorAggregate $collection, ExporterInterface $exporter): string
 {
     $rows = [];
     foreach ($collection as $item) {
         $rows[] = $item;
     }
 
-    return $jsonExporter->export($rows);
+    return $exporter->export($rows);
 }
 
 /** @param array<int, BienImmobilier> $biens */
@@ -68,7 +73,16 @@ function hasBienWithId(array $biens, int $id): bool
     return false;
 }
 
-$repository = new JsonDataRepository(__DIR__ . '/database.json');
+// PRINCIPE S — On injecte le PropertyHydrator avec ses handlers (OCP).
+// PRINCIPE O — Les handlers sont déclarés ici : ajouter un type Villa = ajouter new VillaHandler()
+// PRINCIPE D — On type-hinte $repository sur DataRepositoryInterface (pas JsonDataRepository)
+$hydrator = new PropertyHydrator([
+    new AppartementHandler(),
+    new MaisonHandler(),
+]);
+
+/** @var DataRepositoryInterface $repository */
+$repository = new JsonDataRepository(__DIR__ . '/database.json', $hydrator);
 $dataset = $repository->load();
 
 $owners = $dataset['owners'];
