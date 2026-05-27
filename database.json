@@ -1,0 +1,86 @@
+{
+    "owners": [
+        {
+            "id": 1,
+            "lastName": "MARTIN",
+            "firstName": "Julie",
+            "email": "julie.martin@example.com",
+            "phone": "0611223344",
+            "address": "10 rue de la Paix, Lyon"
+        },
+        {
+            "id": 2,
+            "lastName": "DURAND",
+            "firstName": "Alex",
+            "email": "alex.durand@example.com",
+            "phone": "0699887766",
+            "address": "25 avenue des Fleurs, Nantes"
+        }
+    ],
+    "properties": [
+        {
+            "type": "appartement",
+            "id": 101,
+            "city": "Lyon",
+            "price": 180000,
+            "area": 45,
+            "status": "disponible",
+            "ownerId": 1,
+            "rooms": 2,
+            "floor": 3,
+            "hasElevator": true,
+            "isFurnished": false,
+            "monthlyRent": 850
+        },
+        {
+            "type": "appartement",
+            "id": 102,
+            "city": "Marseille",
+            "price": 140000,
+            "area": 38,
+            "status": "indisponible",
+            "ownerId": 1,
+            "rooms": 2,
+            "floor": "RDC",
+            "hasElevator": false,
+            "isFurnished": true,
+            "monthlyRent": 730
+        },
+        {
+            "type": "appartement",
+            "id": 103,
+            "city": "Bordeaux",
+            "price": 230000,
+            "area": 62,
+            "status": "disponible",
+            "ownerId": 2,
+            "rooms": 3,
+            "floor": 4,
+            "hasElevator": true,
+            "isFurnished": true,
+            "monthlyRent": 1100
+        },
+        {
+            "type": "maison",
+            "id": 104,
+            "city": "Nantes",
+            "price": 320000,
+            "area": 120,
+            "status": "indisponible",
+            "ownerId": 2,
+            "bedrooms": 4,
+            "monthlyRent": 1600
+        },
+        {
+            "type": "maison",
+            "id": 105,
+            "city": "Rennes",
+            "price": 280000,
+            "area": 95,
+            "status": "disponible",
+            "ownerId": 1,
+            "bedrooms": 3,
+            "monthlyRent": 1450
+        }
+    ]
+}

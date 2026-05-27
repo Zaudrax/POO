@@ -56,22 +56,52 @@ function exporterCollectionJson(Countable&IteratorAggregate $collection, JsonExp
     return $jsonExporter->export($rows);
 }
 
-$owner1 = new Proprietaire(1, 'Martin', 'Julie', 'julie.martin@example.com', '0611223344', '10 rue de la Paix, Lyon');
-$owner2 = new Proprietaire(2, 'Durand', 'Alex', 'alex.durand@example.com', '0699887766', '25 avenue des Fleurs, Nantes');
+/** @param array<int, BienImmobilier> $biens */
+function hasBienWithId(array $biens, int $id): bool
+{
+    foreach ($biens as $bien) {
+        if ($bien->getId() === $id) {
+            return true;
+        }
+    }
 
-$biens = [
-    new Appartement(101, 'Lyon', 180000, 45, 2, 3, true, false, BienStatut::DISPONIBLE, $owner1),
-    new Appartement(102, 'Marseille', 140000, 38, 2, 'RDC', false, true, BienStatut::INDISPONIBLE, $owner1),
-    new Appartement(103, 'Bordeaux', 230000, 62, 3, 4, true, true, BienStatut::DISPONIBLE, $owner2),
-    new Maison(104, 'Nantes', 320000, 120, 4, BienStatut::INDISPONIBLE, $owner2),
-];
+    return false;
+}
 
-$loyers = [
-    101 => 850,
-    102 => 730,
-    103 => 1100,
-    104 => 1600,
-];
+$repository = new JsonDataRepository(__DIR__ . '/database.json');
+$dataset = $repository->load();
+
+$owners = $dataset['owners'];
+$biens = $dataset['biens'];
+$loyers = $dataset['loyers'];
+
+// Ajout d'un bien test pour le save ------------------------------------------
+
+$demoBienId = 105;
+
+if (!hasBienWithId($biens, $demoBienId) && isset($owners[0])) {
+    $biens[] = new Maison(
+        $demoBienId,
+        'Rennes',
+        280000,
+        95,
+        3,
+        BienStatut::DISPONIBLE,
+        $owners[0]
+    );
+    $loyers[$demoBienId] = 1450;
+
+    $repository->save($owners, $biens, $loyers);
+
+    $dataset = $repository->load();
+    $owners = $dataset['owners'];
+    $biens = $dataset['biens'];
+    $loyers = $dataset['loyers'];
+
+    echo 'Demo save: bien #' . $demoBienId . ' ajoute dans database.json.' . PHP_EOL;
+}
+
+// -----------------------------------------------------------------------------
 
 echo 'Liste complete des biens' . PHP_EOL;
 echo str_repeat('=', 60) . PHP_EOL;
@@ -101,17 +131,22 @@ foreach ($testsRecherche as $test) {
     echo implode(', ', $ids) . PHP_EOL;
 }
 
-afficherElementRecherche($biens[0], 'Lyon');
+if (isset($biens[0])) {
+    afficherElementRecherche($biens[0], 'Lyon');
+}
 
 echo PHP_EOL . 'Contacts proprietaires (DNF)' . PHP_EOL;
 echo str_repeat('=', 60) . PHP_EOL;
-echo decrireContact($owner1) . PHP_EOL;
+if (isset($owners[0])) {
+    echo decrireContact($owners[0]) . PHP_EOL;
+}
 echo decrireContact('agence@example.com') . PHP_EOL;
 
 echo PHP_EOL . 'Verification proprietaires rattaches' . PHP_EOL;
 echo str_repeat('=', 60) . PHP_EOL;
-echo $owner1->getFullName() . ' possede ' . count($owner1->getBiens()) . ' bien(s).' . PHP_EOL;
-echo $owner2->getFullName() . ' possede ' . count($owner2->getBiens()) . ' bien(s).' . PHP_EOL;
+foreach ($owners as $owner) {
+    echo $owner->getFullName() . ' possede ' . count($owner->getBiens()) . ' bien(s).' . PHP_EOL;
+}
 
 $exportableBiens = array_map(
     static fn (BienImmobilier $bien): array => $bien->toExportArray(),
