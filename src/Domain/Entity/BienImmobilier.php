@@ -9,6 +9,8 @@ abstract class BienImmobilier implements ExportableInterface, IdentifiableInterf
     private float $area;
     private BienStatut $statut;
     private ?Proprietaire $proprietaire = null;
+    /** @var array<int, BienObserverInterface> */
+    private array $observers = [];
 
     public function __construct(
         public readonly int $id,
@@ -91,7 +93,28 @@ abstract class BienImmobilier implements ExportableInterface, IdentifiableInterf
 
     public function setStatut(BienStatut $statut): void
     {
+        if (isset($this->statut) && $this->statut === $statut) {
+            return;
+        }
+
+        $ancienStatut = $this->statut ?? $statut;
         $this->statut = $statut;
+
+        if (isset($this->statut)) {
+            $this->notifyStatutChanged($ancienStatut, $statut);
+        }
+    }
+
+    public function addObserver(BienObserverInterface $observer): void
+    {
+        $this->observers[] = $observer;
+    }
+
+    private function notifyStatutChanged(BienStatut $ancienStatut, BienStatut $nouveauStatut): void
+    {
+        foreach ($this->observers as $observer) {
+            $observer->update($this, $ancienStatut, $nouveauStatut);
+        }
     }
 
     public function getProprietaire(): ?Proprietaire

@@ -102,6 +102,23 @@ $owners = $dataset['owners'];
 $biens = $dataset['biens'];
 $loyers = $dataset['loyers'];
 
+echo 'Observer - changement de statut' . PHP_EOL;
+echo str_repeat('=', 60) . PHP_EOL;
+if (isset($biens[0])) {
+    $emailObserver = new ConsoleBienObserver('EmailNotifier');
+    $logObserver = new ConsoleBienObserver('LogObserver');
+
+    $biens[0]->addObserver($emailObserver);
+    $biens[0]->addObserver($logObserver);
+
+    $nouveauStatut = $biens[0]->getStatut() === BienStatut::DISPONIBLE
+        ? BienStatut::INDISPONIBLE
+        : BienStatut::DISPONIBLE;
+
+    $biens[0]->setStatut($nouveauStatut);
+}
+echo PHP_EOL;
+
 // Ajout d'un bien test pour le save ------------------------------------------
 
 $demoBienId = 105;
