@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/autoload.php';
 
+$sqlitePath = __DIR__ . '/data/app.sqlite';
+$dbSingletonA = DatabaseConnection::getInstance($sqlitePath);
+$dbSingletonB = DatabaseConnection::getInstance();
+$isSameInstance = $dbSingletonA === $dbSingletonB ? 'oui' : 'non';
+
 /** @param array<int, BienImmobilier> $biens */
 function rechercherBiens(array $biens, (Stringable&JsonSerializable)|string|int|null $recherche): array
 {
@@ -73,9 +78,25 @@ $hydrator = new PropertyHydrator([
     new MaisonHandler(),
 ]);
 
+$sqliteRepository = new SqliteDataRepository($dbSingletonA->getPdo(), $hydrator);
+
+if ($sqliteRepository->isEmpty()) {
+    $jsonBootstrapRepository = new JsonDataRepository(__DIR__ . '/data/database.json', $hydrator);
+    $bootstrapDataset = $jsonBootstrapRepository->load();
+    $sqliteRepository->save($bootstrapDataset['owners'], $bootstrapDataset['biens'], $bootstrapDataset['loyers']);
+    echo 'SQLite seed: donnees JSON importees dans data/app.sqlite.' . PHP_EOL;
+}
+
 /** @var DataRepositoryInterface $repository */
-$repository = new JsonDataRepository(__DIR__ . '/data/database.json', $hydrator);
+$repository = $sqliteRepository;
+
 $dataset = $repository->load();
+
+echo 'Singleton DB (SQLite)' . PHP_EOL;
+echo str_repeat('=', 60) . PHP_EOL;
+echo 'Meme instance ? ' . $isSameInstance . PHP_EOL;
+echo 'Fichier DB: ' . $sqlitePath . PHP_EOL;
+echo 'Donnees metier chargees via SQLite.' . PHP_EOL . PHP_EOL;
 
 $owners = $dataset['owners'];
 $biens = $dataset['biens'];
