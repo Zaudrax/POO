@@ -74,7 +74,7 @@ $hydrator = new PropertyHydrator([
 ]);
 
 /** @var DataRepositoryInterface $repository */
-$repository = new JsonDataRepository(__DIR__ . '/database.json', $hydrator);
+$repository = new JsonDataRepository(__DIR__ . '/data/database.json', $hydrator);
 $dataset = $repository->load();
 
 $owners = $dataset['owners'];
@@ -104,7 +104,7 @@ if (!hasBienWithId($biens, $demoBienId) && isset($owners[0])) {
     $biens = $dataset['biens'];
     $loyers = $dataset['loyers'];
 
-    echo 'Demo save: bien #' . $demoBienId . ' ajoute dans database.json.' . PHP_EOL;
+    echo 'Demo save: bien #' . $demoBienId . ' ajoute dans data/database.json.' . PHP_EOL;
 }
 
 // -----------------------------------------------------------------------------
@@ -161,14 +161,16 @@ $exportableBiens = array_map(
 
 $jsonExporter = new JsonExporter();
 $csvExporter = new CsvExporter();
+$exportContext = new ExportContext($jsonExporter);
 
-echo PHP_EOL . 'Export JSON (avec enum status)' . PHP_EOL;
+echo PHP_EOL . 'Strategy Export - JSON (avec enum status)' . PHP_EOL;
 echo str_repeat('=', 60) . PHP_EOL;
-echo $jsonExporter->export($exportableBiens) . PHP_EOL;
+echo $exportContext->export($exportableBiens) . PHP_EOL;
 
-echo PHP_EOL . 'Export CSV (avec enum status)' . PHP_EOL;
+echo PHP_EOL . 'Strategy Export - CSV (avec enum status)' . PHP_EOL;
 echo str_repeat('=', 60) . PHP_EOL;
-echo $csvExporter->export($exportableBiens) . PHP_EOL;
+$exportContext->setStrategy($csvExporter);
+echo $exportContext->export($exportableBiens) . PHP_EOL;
 
 echo PHP_EOL . 'Intersection Countable&IteratorAggregate pour export JSON' . PHP_EOL;
 echo str_repeat('=', 60) . PHP_EOL;
