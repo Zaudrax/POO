@@ -107,15 +107,15 @@ $loyers = $dataset['loyers'];
 $demoBienId = 105;
 
 if (!hasBienWithId($biens, $demoBienId) && isset($owners[0])) {
-    $biens[] = new Maison(
-        $demoBienId,
-        'Rennes',
-        280000,
-        95,
-        3,
-        BienStatut::DISPONIBLE,
-        $owners[0]
-    );
+    $biens[] = BienFactory::createFromArray([
+        'type' => 'maison',
+        'id' => $demoBienId,
+        'city' => 'Rennes',
+        'price' => 280000,
+        'area' => 95,
+        'bedrooms' => 3,
+        'status' => BienStatut::DISPONIBLE,
+    ], $owners[0]);
     $loyers[$demoBienId] = 1450;
 
     $repository->save($owners, $biens, $loyers);
@@ -125,7 +125,7 @@ if (!hasBienWithId($biens, $demoBienId) && isset($owners[0])) {
     $biens = $dataset['biens'];
     $loyers = $dataset['loyers'];
 
-    echo 'Demo save: bien #' . $demoBienId . ' ajoute dans data/database.json.' . PHP_EOL;
+    echo 'Demo save: bien #' . $demoBienId . ' ajoute dans SQLite.' . PHP_EOL;
 }
 
 // -----------------------------------------------------------------------------
